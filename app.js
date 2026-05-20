@@ -488,7 +488,7 @@
     if (!canvas || !track) return;
 
     const ctx    = canvas.getContext('2d');
-    const TOTAL  = 192;
+    const TOTAL  = window.innerWidth < 768 ? 1 : 192;
     const pad    = n => String(n).padStart(3, '0');
 
     let currentFrame = 0;
@@ -498,7 +498,7 @@
 
     /* Resize canvas al viewport — respeta devicePixelRatio para pantallas Retina */
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
       const w   = window.innerWidth;
       const h   = window.innerHeight;
       canvas.width          = Math.round(w * dpr);
