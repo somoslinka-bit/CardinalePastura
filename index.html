@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cardinale Pastura | Desarrollos Inmobiliarios en Tandil</title>
+<meta name="description" content="Desarrollos inmobiliarios de autor en Tandil. Proyectos residenciales contemporáneos con diseño premium. Cardinale Pastura.">
+<meta property="og:title" content="Cardinale Pastura | Desarrollos Inmobiliarios Tandil">
+<meta property="og:description" content="Arquitectura que trasciende. Proyectos residenciales premium en Tandil, Buenos Aires.">
+<meta property="og:locale" content="es_AR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="no-js">
+
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<!-- ═══ INTRO CURTAIN (CL-style rectangle panels) ════════ -->
+<div class="page-intro" id="page-intro" aria-hidden="true">
+  <div class="page-intro__logo">
+    <img src="public/logo_principal_blanco.png" alt="Cardinale Pastura">
+  </div>
+  <div class="page-intro__curtains">
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+    <div class="curtain"></div>
+  </div>
+</div>
+
+<!-- Cursor personalizado -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor__dot"></div>
+</div>
+
+<!-- ═══ NAVBAR ════════════════════════════════════════════ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="#top" class="nav__logo" aria-label="Cardinale Pastura — Inicio">
+      <img src="public/logo_principal_blanco.png" alt="Cardinale Pastura" class="nav__logo-img nav__logo-img--white">
+      <img src="public/logo_principal.png" alt="" aria-hidden="true" class="nav__logo-img nav__logo-img--dark">
+    </a>
+
+    <nav class="nav__links" aria-label="Principal">
+      <a href="#proyectos" class="hover-up">
+        <span class="ah">Proyectos</span>
+        <span class="ah2">Proyectos</span>
+      </a>
+      <a href="#nosotros" class="hover-up">
+        <span class="ah">Nosotros</span>
+        <span class="ah2">Nosotros</span>
+      </a>
+      <a href="#contacto" class="hover-up">
+        <span class="ah">Contacto</span>
+        <span class="ah2">Contacto</span>
+      </a>
+    </nav>
+
+    <a href="#contacto" class="nav__cta btn-magnetic">
+      <span class="ah">Consultanos</span>
+      <span class="ah2">Consultanos</span>
+    </a>
+
+    <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile overlay menu -->
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+  <nav aria-label="Menú móvil">
+    <a href="#proyectos" class="hover-up">
+      <span class="ah">Proyectos</span><span class="ah2">Proyectos</span>
+    </a>
+    <a href="#nosotros" class="hover-up">
+      <span class="ah">Nosotros</span><span class="ah2">Nosotros</span>
+    </a>
+    <a href="#contacto" class="hover-up">
+      <span class="ah">Contacto</span><span class="ah2">Contacto</span>
+    </a>
+    <a href="#contacto" class="mobile-menu__cta hover-up">
+      <span class="ah">Consultanos</span><span class="ah2">Consultanos</span>
+    </a>
+  </nav>
+  <div class="mobile-menu__foot">Tandil · Buenos Aires · Argentina</div>
+</div>
+
+<main id="main">
+
+<!-- ═══ SCROLLTELLING HERO — timelapse de construcción ══ -->
+<section class="scrolltelling" id="top">
+  <div class="scrolltelling__track">
+    <div class="scrolltelling__sticky">
+
+      <canvas id="st-canvas" class="scrolltelling__canvas" aria-hidden="true"></canvas>
+      <div class="scrolltelling__vignette" aria-hidden="true"></div>
+
+      <div class="scrolltelling__copy" id="st-copy-1" aria-hidden="true">
+        <p class="scrolltelling__eyebrow">Desde los cimientos</p>
+        <h2 class="scrolltelling__headline">La idea<br>toma forma.</h2>
+      </div>
+
+      <div class="scrolltelling__copy" id="st-copy-2" aria-hidden="true">
+        <p class="scrolltelling__eyebrow">Construcción de autor</p>
+        <h2 class="scrolltelling__headline">Precisión en<br>cada detalle.</h2>
+      </div>
+
+      <div class="scrolltelling__copy" id="st-copy-3" aria-hidden="true">
+        <p class="scrolltelling__eyebrow">El resultado</p>
+        <h2 class="scrolltelling__headline">Desarrollos que<br>trascienden.</h2>
+      </div>
+
+      <div class="scrolltelling__hint" id="st-hint" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="scrolltelling__hint-line"></div>
+      </div>
+
+      <div class="scrolltelling__loader" id="st-loader" aria-live="polite">
+        <div class="st-loader__track">
+          <div class="st-loader__fill" id="st-fill"></div>
+        </div>
+        <p>Cargando</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MARQUEE ════════════════════════════════════════════ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__inner">
+    <div class="marquee__track">
+      <span>Cardinale Pastura</span><em>·</em>
+      <span>Desarrollos Inmobiliarios</span><em>·</em>
+      <span>Tandil</span><em>·</em>
+      <span>Buenos Aires</span><em>·</em>
+      <span>Argentina</span><em>·</em>
+      <span>Arquitectura Contemporánea</span><em>·</em>
+      <span>Cardinale Pastura</span><em>·</em>
+      <span>Desarrollos Inmobiliarios</span><em>·</em>
+      <span>Tandil</span><em>·</em>
+      <span>Buenos Aires</span><em>·</em>
+      <span>Argentina</span><em>·</em>
+      <span>Arquitectura Contemporánea</span><em>·</em>
+    </div>
+    <div class="marquee__track" aria-hidden="true">
+      <span>Cardinale Pastura</span><em>·</em>
+      <span>Desarrollos Inmobiliarios</span><em>·</em>
+      <span>Tandil</span><em>·</em>
+      <span>Buenos Aires</span><em>·</em>
+      <span>Argentina</span><em>·</em>
+      <span>Arquitectura Contemporánea</span><em>·</em>
+      <span>Cardinale Pastura</span><em>·</em>
+      <span>Desarrollos Inmobiliarios</span><em>·</em>
+      <span>Tandil</span><em>·</em>
+      <span>Buenos Aires</span><em>·</em>
+      <span>Argentina</span><em>·</em>
+      <span>Arquitectura Contemporánea</span><em>·</em>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROYECTOS ══════════════════════════════════════════ -->
+<section class="proyectos section" id="proyectos">
+  <div class="section__head">
+    <span class="section__numeral" aria-hidden="true">01</span>
+    <p class="section__label reveal-up"><span class="section__rule"></span>Proyectos</p>
+    <h2 class="section__title" data-word-split>Cada desarrollo, una historia de lugar.</h2>
+  </div>
+
+  <div class="proyectos__grid">
+
+    <article class="card" data-reveal-card>
+      <a href="#contacto" class="card__inner">
+        <div class="card__media">
+          <div class="card__wipe"></div>
+          <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1400&q=80"
+               alt="Render del proyecto Solana — departamentos premium en Tandil" loading="lazy">
+        </div>
+        <div class="card__name">Solana</div>
+        <div class="card__hover">
+          <p class="card__type">Departamentos · En Pozo</p>
+          <h3 class="card__title">Solana</h3>
+          <p class="card__meta">Premium · Entrega 2026</p>
+          <span class="card__cta">Ver más <span class="card__arrow">→</span></span>
+        </div>
+      </a>
+    </article>
+
+    <article class="card" data-reveal-card style="--cd:120ms">
+      <a href="#contacto" class="card__inner">
+        <div class="card__media">
+          <div class="card__wipe"></div>
+          <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=80"
+               alt="Render del proyecto Norte — unidades en pozo, Tandil Norte" loading="lazy">
+        </div>
+        <div class="card__name">Norte</div>
+        <div class="card__hover">
+          <p class="card__type">Departamentos · En Pozo</p>
+          <h3 class="card__title">Norte</h3>
+          <p class="card__meta">Unidades · Tandil Norte</p>
+          <span class="card__cta">Ver más <span class="card__arrow">→</span></span>
+        </div>
+      </a>
+    </article>
+
+    <article class="card" data-reveal-card style="--cd:60ms">
+      <a href="#contacto" class="card__inner">
+        <div class="card__media">
+          <div class="card__wipe"></div>
+          <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=80"
+               alt="Render del proyecto Altos 312 — duplex y departamentos" loading="lazy">
+        </div>
+        <div class="card__name">Altos 312</div>
+        <div class="card__hover">
+          <p class="card__type">Duplex · Departamentos</p>
+          <h3 class="card__title">Altos 312</h3>
+          <p class="card__meta">Residencial · 2027</p>
+          <span class="card__cta">Ver más <span class="card__arrow">→</span></span>
+        </div>
+      </a>
+    </article>
+
+    <article class="card" data-reveal-card style="--cd:180ms">
+      <a href="#contacto" class="card__inner">
+        <div class="card__media">
+          <div class="card__wipe"></div>
+          <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1400&q=80"
+               alt="Render del proyecto SierraViva — casas de diseño" loading="lazy">
+        </div>
+        <div class="card__name">SierraViva</div>
+        <div class="card__hover">
+          <p class="card__type">Casas · De Autor</p>
+          <h3 class="card__title">SierraViva</h3>
+          <p class="card__meta">Diseño · Materiales nobles</p>
+          <span class="card__cta">Ver más <span class="card__arrow">→</span></span>
+        </div>
+      </a>
+    </article>
+
+  </div>
+
+  <div class="proyectos__foot reveal-up">
+    <a href="#contacto" class="btn btn--ghost-navy btn-magnetic">
+      <span class="ah">Ver todos los proyectos →</span>
+      <span class="ah2">Ver todos los proyectos →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ BENTO SCROLL ═══════════════════════════════════════ -->
+<section class="bento-hero">
+  <div class="bento-scroll">
+    <div class="bento-sticky">
+
+      <!-- Grid de videos -->
+      <div class="bento-grid" id="bento-grid">
+        <div class="bento-cell">
+          <video autoplay muted loop playsinline>
+            <source src="public/1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="bento-cell">
+          <video autoplay muted loop playsinline>
+            <source src="public/2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="bento-cell">
+          <video autoplay muted loop playsinline>
+            <source src="public/3.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <a href="#nosotros" class="hero__scroll" aria-label="Bajar a Nosotros">
+        <span class="hero__scroll-line"><span></span></span>
+        <span class="hero__scroll-label">Scroll</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ NOSOTROS ══════════════════════════════════════════ -->
+<section class="nosotros" id="nosotros">
+  <div class="nosotros__media" data-parallax-img>
+    <img src="public/equipo_1.jpg" alt="Equipo Cardinale Pastura en Tandil" loading="lazy">
+    <span class="nosotros__rule" aria-hidden="true"></span>
+  </div>
+
+  <div class="nosotros__body">
+    <span class="section__numeral section__numeral--dark" aria-hidden="true">02</span>
+    <p class="section__label section__label--light reveal-up"><span class="section__rule section__rule--steel"></span>Nosotros</p>
+
+    <h2 class="nosotros__lead" data-word-split>Somos Cardinale Pastura, una desarrolladora con raíces en Tandil y visión de futuro.</h2>
+
+    <p class="nosotros__copy reveal-up" data-delay="400">Creamos espacios que combinan arquitectura contemporánea con la identidad única de nuestra ciudad.</p>
+
+    <div class="nosotros__stats">
+      <div class="stat reveal-up" data-delay="200">
+        <span class="stat__num" data-count="12" data-suffix="+">0+</span>
+        <span class="stat__cap">Años de experiencia</span>
+      </div>
+      <div class="stat reveal-up" data-delay="320">
+        <span class="stat__num" data-count="30" data-suffix="+">0+</span>
+        <span class="stat__cap">Unidades entregadas</span>
+      </div>
+      <div class="stat reveal-up" data-delay="440">
+        <span class="stat__num" data-count="100" data-suffix="%">0%</span>
+        <span class="stat__cap">Proyectos propios</span>
+      </div>
+    </div>
+
+    <a href="#contacto" class="link link--steel reveal-up hover-up" data-delay="560">
+      <span class="ah">Conocé nuestra historia →</span>
+      <span class="ah2">Conocé nuestra historia →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ CONTACTO ══════════════════════════════════════════ -->
+<section class="contacto section" id="contacto">
+  <div class="contacto__head">
+    <span class="section__numeral" aria-hidden="true">03</span>
+    <p class="section__label reveal-up"><span class="section__rule"></span>Contacto</p>
+    <h2 class="section__title" data-word-split>Hablemos de tu próximo hogar.</h2>
+
+    <ul class="contacto__info reveal-up" data-delay="240">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M12 21s-7-7.1-7-12a7 7 0 1 1 14 0c0 4.9-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        <span>Tandil, Buenos Aires, Argentina</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <path d="M22 16.9v2.6a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1A19.5 19.5 0 0 1 5 12 19.8 19.8 0 0 1 1.9 3.3 2 2 0 0 1 3.9 1h2.6a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.5 8.5a16 16 0 0 0 6 6l1.1-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/>
+        </svg>
+        <span>+54 (249) 4&nbsp;XXX&nbsp;XXXX</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/>
+        </svg>
+        <span>hola@cardinalepastura.com.ar</span>
+      </li>
+    </ul>
+
+    <div class="contacto__social reveal-up" data-delay="360">
+      <a href="#" aria-label="Instagram" class="hover-up">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>
+      </a>
+      <a href="#" aria-label="LinkedIn" class="hover-up">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="contacto__form-wrap">
+    <form class="form" id="form" novalidate>
+      <div class="form__row">
+        <label for="f-name">Nombre completo *</label>
+        <input id="f-name" name="name" type="text" required autocomplete="name" placeholder="Nombre y apellido">
+      </div>
+      <div class="form__grid2">
+        <div class="form__row">
+          <label for="f-email">Email *</label>
+          <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="tu@email.com">
+        </div>
+        <div class="form__row">
+          <label for="f-tel">Teléfono</label>
+          <input id="f-tel" name="tel" type="tel" autocomplete="tel" placeholder="+54 ...">
+        </div>
+      </div>
+      <div class="form__row">
+        <label for="f-interest">¿Qué te interesa?</label>
+        <div class="form__select">
+          <select id="f-interest" name="interest">
+            <option value="comprar">Comprar una unidad</option>
+            <option value="invertir">Invertir en un proyecto</option>
+            <option value="info">Información general</option>
+          </select>
+          <span class="form__chev" aria-hidden="true">▾</span>
+        </div>
+      </div>
+      <div class="form__row">
+        <label for="f-msg">Mensaje</label>
+        <textarea id="f-msg" name="message" rows="4" placeholder="Contanos en qué podemos ayudarte..."></textarea>
+      </div>
+      <button type="submit" class="form__submit btn-magnetic">
+        <span class="ah">Enviar consulta</span>
+        <span class="ah2">Enviar consulta</span>
+      </button>
+      <p class="form__hint">Te respondemos en menos de 24&nbsp;hs.</p>
+    </form>
+
+    <div class="form__success" id="form-success" hidden>
+      <p class="eyebrow eyebrow--steel">Gracias</p>
+      <h3>Recibimos tu mensaje.</h3>
+      <p>Un asesor de Cardinale Pastura se pondrá en contacto en las próximas 24&nbsp;horas.</p>
+      <button type="button" class="link link--navy hover-up" id="form-reset">
+        <span class="ah">Enviar otra consulta →</span>
+        <span class="ah2">Enviar otra consulta →</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__col footer__col--brand">
+      <img src="public/logo_principal_blanco.png" alt="Cardinale Pastura" class="footer__logo">
+      <p>Desarrollos Inmobiliarios · Tandil</p>
+    </div>
+    <div class="footer__col">
+      <p class="footer__head">Sitio</p>
+      <a href="#proyectos" class="hover-up"><span class="ah">Proyectos</span><span class="ah2">Proyectos</span></a>
+      <a href="#nosotros" class="hover-up"><span class="ah">Nosotros</span><span class="ah2">Nosotros</span></a>
+      <a href="#contacto" class="hover-up"><span class="ah">Contacto</span><span class="ah2">Contacto</span></a>
+    </div>
+    <div class="footer__col">
+      <p class="footer__head">Contacto</p>
+      <a href="mailto:hola@cardinalepastura.com.ar" class="hover-up">
+        <span class="ah">hola@cardinalepastura.com.ar</span>
+        <span class="ah2">hola@cardinalepastura.com.ar</span>
+      </a>
+      <a href="tel:+542494XXXXXX" class="hover-up">
+        <span class="ah">+54 (249) 4&nbsp;XXX&nbsp;XXXX</span>
+        <span class="ah2">+54 (249) 4&nbsp;XXX&nbsp;XXXX</span>
+      </a>
+      <div class="footer__social">
+        <a href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/></svg>
+        </a>
+        <a href="#" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>© 2025 Cardinale Pastura · Desarrollos Inmobiliarios · Tandil, Argentina</p>
+    <p>Diseño y desarrollo por <a href="#" class="hover-up" style="color:var(--steel)"><span class="ah">LINKA</span><span class="ah2">LINKA</span></a></p>
+  </div>
+</footer>
+
+<!-- CDN: Lenis smooth scroll -->
+<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+<!-- CDN: GSAP (para intro + stagger animations) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
