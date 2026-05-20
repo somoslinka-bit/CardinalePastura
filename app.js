@@ -531,13 +531,6 @@
       if (triggered) return;
       triggered = true;
 
-      /* Ocultar loader */
-      const loader = document.getElementById('st-loader');
-      if (loader) {
-        loader.style.opacity = '0';
-        setTimeout(() => loader.remove(), 800);
-      }
-
       /* Render primer frame limpio */
       renderFrame(0);
       window.addEventListener('resize', resize);
