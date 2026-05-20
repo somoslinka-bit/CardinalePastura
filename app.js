@@ -173,6 +173,8 @@
   setupScrollReveals();
   setupBentoHero();
   setupScrolltelling();
+  setupAccordion();
+  setupVelocityText();
 
   /* ═══════════════════════════════════
      CONTADOR ANIMADO
@@ -413,7 +415,72 @@
   });
 
   /* ═══════════════════════════════════
-     SCROLLTELLING — canvas + 210 frames
+     ACCORDION DE PROYECTOS
+     ═══════════════════════════════════ */
+  function setupAccordion() {
+    const items = document.querySelectorAll('[data-acc-item]');
+    if (!items.length) return;
+
+    items.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        items.forEach(el => el.classList.remove('accordion__item--active'));
+        item.classList.add('accordion__item--active');
+      });
+
+      // Soporte teclado
+      item.addEventListener('focus', () => {
+        items.forEach(el => el.classList.remove('accordion__item--active'));
+        item.classList.add('accordion__item--active');
+      });
+
+      // Mobile: primer tap expande, segundo tap navega al link
+      item.addEventListener('click', e => {
+        if (!item.classList.contains('accordion__item--active')) {
+          e.preventDefault();
+          items.forEach(el => el.classList.remove('accordion__item--active'));
+          item.classList.add('accordion__item--active');
+        }
+      });
+    });
+  }
+
+  /* ═══════════════════════════════════
+     VELOCITY TEXT
+     ═══════════════════════════════════ */
+  function setupVelocityText() {
+    const section = document.querySelector('.velocity-section');
+    const text    = document.querySelector('.velocity-text');
+    if (!section || !text) return;
+
+    // Texto arranca 40vw a la derecha y termina 250vw a la izquierda
+    // El trigger va de cuando entra al viewport hasta que sale — 100vh de sección = ~200vh de viaje total
+    gsap.fromTo(text,
+      { x: '40vw' },
+      {
+        x: '-260vw',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      }
+    );
+
+    // Skew por velocidad de scroll
+    let lastScroll = 0;
+    gsap.ticker.add(() => {
+      const currentScroll = window.scrollY;
+      const vel = (currentScroll - lastScroll) * 0.08;
+      const clamped = Math.max(-20, Math.min(20, vel));
+      lastScroll = currentScroll;
+      gsap.to(text, { skewX: clamped, duration: 0.4, ease: 'power1.out', overwrite: 'auto' });
+    });
+  }
+
+  /* ═══════════════════════════════════
+     SCROLLTELLING — canvas + 192 frames
      ═══════════════════════════════════ */
   function setupScrolltelling() {
     const canvas = document.getElementById('st-canvas');
@@ -421,7 +488,7 @@
     if (!canvas || !track) return;
 
     const ctx    = canvas.getContext('2d');
-    const TOTAL  = 210;
+    const TOTAL  = 192;
     const pad    = n => String(n).padStart(3, '0');
 
     let currentFrame = 0;
