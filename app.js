@@ -488,7 +488,9 @@
     if (!canvas || !track) return;
 
     const ctx    = canvas.getContext('2d');
-    const TOTAL  = window.innerWidth < 768 ? 1 : 192;
+    const isMobile = window.innerWidth < 768;
+    const STEP   = isMobile ? 4 : 1;
+    const TOTAL  = isMobile ? 48 : 192;
     const pad    = n => String(n).padStart(3, '0');
 
     let currentFrame = 0;
@@ -583,7 +585,7 @@
         if (fill) fill.style.width = (loadedCount / TOTAL * 100).toFixed(1) + '%';
         if (loadedCount === TOTAL) initST();
       };
-      img.src    = `public/animacion/ezgif-frame-${pad(i + 1)}.jpg`;
+      img.src    = `public/animacion/ezgif-frame-${pad(i * STEP + 1)}.jpg`;
       images[i]  = img;
     }
 
