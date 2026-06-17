@@ -540,9 +540,8 @@
       const hint = document.getElementById('st-hint');
 
       const copies = [
-        { el: document.getElementById('st-copy-1'), in: 0.03, peak: 0.14, out: 0.30 },
-        { el: document.getElementById('st-copy-2'), in: 0.36, peak: 0.49, out: 0.63 },
-        { el: document.getElementById('st-copy-3'), in: 0.68, peak: 0.80, out: 0.96 },
+        { el: document.getElementById('st-copy-1'), in: 0.05, peak: 0.20, out: 0.38 },
+        { el: document.getElementById('st-copy-2'), in: 0.52, peak: 0.62, out: 0.97 },
       ];
 
       ScrollTrigger.create({
