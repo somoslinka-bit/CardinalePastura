@@ -513,7 +513,7 @@
       renderFrame(currentFrame);
     }
 
-    /* Dibujar frame con comportamiento cover (coordenadas CSS) */
+    /* Dibujar frame — cover en desktop, fit-width en mobile */
     function renderFrame(idx) {
       const img = images[idx];
       if (!img?.complete || !img.naturalWidth) return;
@@ -522,9 +522,19 @@
       const r  = img.naturalWidth / img.naturalHeight;
       const cR = cW / cH;
       let dW, dH, dX, dY;
-      if (r > cR) { dH = cH; dW = dH * r; dX = (cW - dW) / 2; dY = 0; }
-      else        { dW = cW; dH = dW / r; dX = 0; dY = (cH - dH) / 2; }
       ctx.clearRect(0, 0, cW, cH);
+      if (isMobile) {
+        /* Fit width: sin zoom, barras oscuras arriba y abajo */
+        ctx.fillStyle = '#1A1A1A';
+        ctx.fillRect(0, 0, cW, cH);
+        dW = cW;
+        dH = dW / r;
+        dX = 0;
+        dY = (cH - dH) / 2;
+      } else {
+        if (r > cR) { dH = cH; dW = dH * r; dX = (cW - dW) / 2; dY = 0; }
+        else        { dW = cW; dH = dW / r; dX = 0; dY = (cH - dH) / 2; }
+      }
       ctx.drawImage(img, dX, dY, dW, dH);
     }
 
@@ -540,8 +550,9 @@
       const hint = document.getElementById('st-hint');
 
       const copies = [
-        { el: document.getElementById('st-copy-1'), in: 0.05, peak: 0.20, out: 0.38 },
-        { el: document.getElementById('st-copy-2'), in: 0.52, peak: 0.62, out: 0.97 },
+        { el: document.getElementById('st-copy-1'), in: 0.02, peak: 0.12, out: 0.36 },
+        { el: document.getElementById('st-copy-2'), in: 0.34, peak: 0.46, out: 0.86 },
+        { el: document.getElementById('st-copy-3'), in: 0.83, peak: 0.90, out: 1.00 },
       ];
 
       ScrollTrigger.create({
