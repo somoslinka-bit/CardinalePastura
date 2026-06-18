@@ -332,9 +332,9 @@
       item.classList.add('accordion__item--active');
     };
 
-    items.forEach(item => {
-      if (hasFinePointer) {
-        /* Desktop: hover y foco abren el item */
+    if (hasFinePointer) {
+      /* Desktop: hover y foco abren el item */
+      items.forEach(item => {
         item.addEventListener('mouseenter', () => activate(item));
         item.addEventListener('focus',      () => activate(item));
         item.addEventListener('click', e => {
@@ -343,21 +343,31 @@
             activate(item);
           }
         });
-      } else {
-        /* Mobile: Lenis previene el touchstart nativo, bloqueando la síntesis
-           del evento click en iOS. Usamos touchstart/touchmove/touchend directo. */
-        let touchMoved = false;
-        item.addEventListener('touchstart', () => { touchMoved = false; }, { passive: true });
-        item.addEventListener('touchmove',  () => { touchMoved = true;  }, { passive: true });
-        item.addEventListener('touchend', e => {
-          if (touchMoved) return; /* fue scroll, no tap */
-          if (!item.classList.contains('accordion__item--active')) {
-            e.preventDefault(); /* evita el click sintético y navegación prematura */
-            activate(item);
-          }
-        });
-      }
-    });
+      });
+    } else {
+      /* Mobile: delegación en document para evitar cualquier intercepción
+         por Lenis o event bubbling a nivel de elemento. Mide distancia
+         de toque para distinguir tap (< 10px) de scroll. */
+      let t0x = 0, t0y = 0;
+      document.addEventListener('touchstart', e => {
+        t0x = e.touches[0].clientX;
+        t0y = e.touches[0].clientY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', e => {
+        const dx = Math.abs(e.changedTouches[0].clientX - t0x);
+        const dy = Math.abs(e.changedTouches[0].clientY - t0y);
+        if (dx > 8 || dy > 8) return; /* fue scroll, ignorar */
+
+        const item = e.target.closest('[data-acc-item]');
+        if (!item) return;
+
+        if (!item.classList.contains('accordion__item--active')) {
+          e.preventDefault(); /* evita click sintético y navegación prematura */
+          activate(item);
+        }
+      });
+    }
   }
 
   /* ═══════════════════════════════════
