@@ -799,6 +799,15 @@ body.menu-open .mobile-menu nav a:nth-child(4) { transition-delay: .5s }
   height: 100%;
   display: block;
 }
+/* Video vertical para mobile — el JS decide si se usa (cae a canvas si no carga) */
+.scrolltelling__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
 .scrolltelling__vignette {
   position: absolute;
   inset: 0;

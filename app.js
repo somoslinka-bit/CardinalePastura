@@ -327,23 +327,26 @@
     const items = document.querySelectorAll('[data-acc-item]');
     if (!items.length) return;
 
+    const activate = (item) => {
+      items.forEach(el => el.classList.remove('accordion__item--active'));
+      item.classList.add('accordion__item--active');
+    };
+
     items.forEach(item => {
-      item.addEventListener('mouseenter', () => {
-        items.forEach(el => el.classList.remove('accordion__item--active'));
-        item.classList.add('accordion__item--active');
-      });
+      /* Desktop (puntero fino): hover y foco abren el item.
+         En touch NO registramos mouseenter — iOS lo dispara junto al tap y
+         deja el click sin efecto, rompiendo la apertura. */
+      if (hasFinePointer) {
+        item.addEventListener('mouseenter', () => activate(item));
+        item.addEventListener('focus',      () => activate(item));
+      }
 
-      item.addEventListener('focus', () => {
-        items.forEach(el => el.classList.remove('accordion__item--active'));
-        item.classList.add('accordion__item--active');
-      });
-
-      // Mobile: primer tap expande, segundo tap sigue el link interno
+      /* Tap/click: si el item está cerrado, primer tap lo expande.
+         Si ya está abierto, el tap deja pasar el link interno (Ver proyecto). */
       item.addEventListener('click', e => {
         if (!item.classList.contains('accordion__item--active')) {
           e.preventDefault();
-          items.forEach(el => el.classList.remove('accordion__item--active'));
-          item.classList.add('accordion__item--active');
+          activate(item);
         }
       });
     });
@@ -754,123 +757,154 @@
     const track  = document.querySelector('.scrolltelling__track');
     if (!canvas || !track) return;
 
-    const ctx    = canvas.getContext('2d');
     const isMobile = window.innerWidth < 768;
-    const TOTAL  = 192;
-    const folder = isMobile ? 'public/animacion-mobile' : 'public/animacion';
-    const pad    = n => String(n).padStart(3, '0');
+    const video    = document.getElementById('st-video');
 
-    let currentFrame = 0;
-    const images     = new Array(TOTAL);
-    let loadedCount  = 0;
-    let triggered    = false;
-
-    /* Resize canvas al viewport — respeta devicePixelRatio para pantallas Retina */
-    function resize() {
-      const dpr = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
-      const w   = window.innerWidth;
-      const h   = window.innerHeight;
-      canvas.width          = Math.round(w * dpr);
-      canvas.height         = Math.round(h * dpr);
-      canvas.style.width    = w + 'px';
-      canvas.style.height   = h + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      renderFrame(currentFrame);
-    }
-
-    /* Dibujar frame — cover en desktop, fit-width en mobile */
-    function renderFrame(idx) {
-      const img = images[idx];
-      if (!img?.complete || !img.naturalWidth) return;
-      const cW = window.innerWidth;
-      const cH = window.innerHeight;
-      const r  = img.naturalWidth / img.naturalHeight;
-      const cR = cW / cH;
-      let dW, dH, dX, dY;
-      ctx.clearRect(0, 0, cW, cH);
-      if (isMobile) {
-        /* Fit width: sin zoom, barras oscuras arriba y abajo */
-        ctx.fillStyle = '#1A1A1A';
-        ctx.fillRect(0, 0, cW, cH);
-        dW = cW;
-        dH = dW / r;
-        dX = 0;
-        dY = (cH - dH) / 2;
-      } else {
-        if (r > cR) { dH = cH; dW = dH * r; dX = (cW - dW) / 2; dY = 0; }
-        else        { dW = cW; dH = dW / r; dX = 0; dY = (cH - dH) / 2; }
-      }
-      ctx.drawImage(img, dX, dY, dW, dH);
-    }
-
-    /* Activar ScrollTrigger una vez cargado todo */
-    function initST() {
-      if (triggered) return;
-      triggered = true;
-
-      /* Render primer frame limpio */
-      renderFrame(0);
-      window.addEventListener('resize', resize);
-
-      const hint = document.getElementById('st-hint');
-
-      /* start→holdIn: palabras entran; holdIn→holdOut: plateau; holdOut→end: palabras salen */
-      const copies = [
+    /* ── Overlay compartido: textos del hero + hint de scroll ── */
+    function makeCopies() {
+      /* start→holdIn: entra · holdIn→holdOut: plateau · holdOut→end: sale */
+      return [
         { el: document.getElementById('st-copy-1'), start: -0.1, holdIn: -0.01, holdOut: 0.30, end: 0.34 },
         { el: document.getElementById('st-copy-2'), start:  0.34, holdIn: 0.40, holdOut: 0.68, end: 0.72 },
         { el: document.getElementById('st-copy-3'), start:  0.72, holdIn: 0.78, holdOut: 2.00, end: 3.00 },
       ];
+    }
+    const hintEl = document.getElementById('st-hint');
+    function updateOverlay(copies, p) {
+      if (hintEl) hintEl.style.opacity = p < 0.04 ? String(1 - p / 0.04) : '0';
+      copies.forEach(({ el, start, holdIn, holdOut, end }) => {
+        if (!el) return;
+        let op = 0;
+        if      (p >= start   && p <  holdIn)  op = (p - start)    / (holdIn  - start);
+        else if (p >= holdIn  && p <= holdOut) op = 1;
+        else if (p >  holdOut && p <  end)     op = 1 - (p - holdOut) / (end - holdOut);
+        el.style.opacity = Math.max(0, Math.min(1, op));
+      });
+    }
+
+    /* ── MODO VIDEO — vertical 9:16 en mobile, scrubbeado por scroll ── */
+    function initVideoMode() {
+      canvas.style.display = 'none';
+      video.style.display  = 'block';
+      video.pause();
+
+      const copies = makeCopies();
+      let targetTime = 0, rafId = null;
+      const applySeek = () => {
+        rafId = null;
+        if (video.readyState >= 1 && isFinite(video.duration)) video.currentTime = targetTime;
+      };
 
       ScrollTrigger.create({
-        trigger: track,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
+        trigger: track, start: 'top top', end: 'bottom bottom', scrub: true,
         onUpdate: (self) => {
           const p = self.progress;
-
-          /* Frame scrub */
-          const idx = Math.min(Math.floor(p * TOTAL), TOTAL - 1);
-          if (idx !== currentFrame) {
-            currentFrame = idx;
-            renderFrame(idx);
-          }
-
-          /* Hint — desaparece al empezar a scrollear */
-          if (hint) hint.style.opacity = p < 0.04 ? String(1 - p / 0.04) : '0';
-
-          /* Textos: sube → plateau → baja, sin overlap entre frases */
-          copies.forEach(({ el, start, holdIn, holdOut, end }) => {
-            if (!el) return;
-            let op = 0;
-            if      (p >= start   && p <  holdIn)  op = (p - start)    / (holdIn  - start);
-            else if (p >= holdIn  && p <= holdOut) op = 1;
-            else if (p >  holdOut && p <  end)     op = 1 - (p - holdOut) / (end - holdOut);
-            el.style.opacity = Math.max(0, Math.min(1, op));
-          });
+          targetTime = p * (video.duration || 7);
+          /* rAF: el seek se aplica una vez por frame para no saturar el decoder en iOS */
+          if (rafId == null) rafId = requestAnimationFrame(applySeek);
+          updateOverlay(copies, p);
         },
       });
     }
 
-    /* Precargar todos los frames */
-    const fill = document.getElementById('st-fill');
+    /* ── MODO FRAMES — secuencia en canvas (desktop, o fallback en mobile) ── */
+    function initFramesMode() {
+      const ctx    = canvas.getContext('2d');
+      const TOTAL  = 192;
+      const folder = isMobile ? 'public/animacion-mobile' : 'public/animacion';
+      const pad    = n => String(n).padStart(3, '0');
 
-    for (let i = 0; i < TOTAL; i++) {
-      const img = new Image();
-      img.onload = img.onerror = () => {
-        loadedCount++;
-        if (fill) fill.style.width = (loadedCount / TOTAL * 100).toFixed(1) + '%';
-      };
-      img.src    = `${folder}/ezgif-frame-${pad(i + 1)}.jpg`;
-      images[i]  = img;
+      let currentFrame = 0;
+      const images     = new Array(TOTAL);
+      let loadedCount  = 0;
+      let triggered    = false;
+
+      function resize() {
+        const dpr = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+        const w   = window.innerWidth;
+        const h   = window.innerHeight;
+        canvas.width          = Math.round(w * dpr);
+        canvas.height         = Math.round(h * dpr);
+        canvas.style.width    = w + 'px';
+        canvas.style.height   = h + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        renderFrame(currentFrame);
+      }
+
+      function renderFrame(idx) {
+        const img = images[idx];
+        if (!img?.complete || !img.naturalWidth) return;
+        const cW = window.innerWidth;
+        const cH = window.innerHeight;
+        const r  = img.naturalWidth / img.naturalHeight;
+        const cR = cW / cH;
+        let dW, dH, dX, dY;
+        ctx.clearRect(0, 0, cW, cH);
+        if (isMobile) {
+          /* Fit width: sin zoom, barras oscuras arriba y abajo */
+          ctx.fillStyle = '#1A1A1A';
+          ctx.fillRect(0, 0, cW, cH);
+          dW = cW;
+          dH = dW / r;
+          dX = 0;
+          dY = (cH - dH) / 2;
+        } else {
+          if (r > cR) { dH = cH; dW = dH * r; dX = (cW - dW) / 2; dY = 0; }
+          else        { dW = cW; dH = dW / r; dX = 0; dY = (cH - dH) / 2; }
+        }
+        ctx.drawImage(img, dX, dY, dW, dH);
+      }
+
+      function initST() {
+        if (triggered) return;
+        triggered = true;
+        renderFrame(0);
+        window.addEventListener('resize', resize);
+        const copies = makeCopies();
+        ScrollTrigger.create({
+          trigger: track, start: 'top top', end: 'bottom bottom', scrub: true,
+          onUpdate: (self) => {
+            const p = self.progress;
+            const idx = Math.min(Math.floor(p * TOTAL), TOTAL - 1);
+            if (idx !== currentFrame) { currentFrame = idx; renderFrame(idx); }
+            updateOverlay(copies, p);
+          },
+        });
+      }
+
+      const fill = document.getElementById('st-fill');
+      for (let i = 0; i < TOTAL; i++) {
+        const img = new Image();
+        img.onload = img.onerror = () => {
+          loadedCount++;
+          if (fill) fill.style.width = (loadedCount / TOTAL * 100).toFixed(1) + '%';
+        };
+        img.src    = `${folder}/ezgif-frame-${pad(i + 1)}.jpg`;
+        images[i]  = img;
+      }
+      /* Scrub interactivo apenas carga el primer frame (el resto baja en background) */
+      images[0].addEventListener('load', () => { resize(); initST(); }, { once: true });
     }
 
-    /* Hacer el scrub interactivo apenas carga el primer frame:
-       renderFrame() ignora frames aún no cargados (mantiene el último visible),
-       así el hero responde sin esperar a que bajen los ~192 frames completos. */
-    images[0].addEventListener('load', () => { resize(); initST(); }, { once: true });
+    /* En mobile probamos el video vertical; si no existe/carga, caemos a los frames */
+    if (isMobile && video) {
+      let decided = false;
+      const useVideo  = () => { if (!decided) { decided = true; initVideoMode(); } };
+      const useFrames = () => { if (!decided) { decided = true; video.style.display = 'none'; initFramesMode(); } };
+      if (video.readyState >= 1) {
+        useVideo();
+      } else {
+        video.addEventListener('loadedmetadata', useVideo,  { once: true });
+        video.addEventListener('error',          useFrames, { once: true });
+        /* Si en 5s no hubo metadata ni error, usar frames por las dudas */
+        setTimeout(() => { if (!decided) useFrames(); }, 5000);
+      }
+      return;
+    }
+
+    initFramesMode();
   }
 
   /* ═══════════════════════════════════
