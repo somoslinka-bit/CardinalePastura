@@ -166,7 +166,9 @@
   setupVelocityText();
   setupProyectosSplit();
   setupSvivaSplit();
+  setupSvivaHoverSlider();
   setupNosotrosSplit();
+  setupVisionBlockReveal();
 
   /* ═══════════════════════════════════
      PARALLAX INTERLUDE — 4 capas
@@ -216,8 +218,10 @@
      NAVBAR — scroll state
      ═══════════════════════════════════ */
   const nav = document.getElementById('nav');
-  lenis.on('scroll', ({ scroll }) => {
-    nav.classList.toggle('is-scrolled', scroll > 80);
+  lenis.on('scroll', ({ scroll, direction }) => {
+    if (scroll <= 80)          nav.classList.remove('is-scrolled');
+    else if (direction === -1) nav.classList.add('is-scrolled');    /* subiendo → opaco */
+    else                       nav.classList.remove('is-scrolled'); /* bajando → transparente */
   });
 
   /* ═══════════════════════════════════
@@ -574,6 +578,138 @@
   }
 
   /* ═══════════════════════════════════
+     VISIÓN — block-wipe reveal
+     ═══════════════════════════════════ */
+  function setupVisionBlockReveal() {
+    if (prefersReduced) return;
+
+    /* Color del bloque que barre sobre el fondo oscuro */
+    const COLOR_MAIN = '#8FAAB8'; /* steel — visible sobre #0D0E10 */
+    const COLOR_STMT = '#F5F4F2'; /* cream — alto contraste en el cierre */
+
+    /* Mide líneas renderizadas por offsetTop y construye la estructura de bloque */
+    function buildBlockLines(el, blockColor) {
+      const text  = el.textContent.trim();
+      const words = text.split(/\s+/);
+      /* Inyectar spans temporales para medir */
+      el.innerHTML = words.map(w => `<span>${w}</span>`).join(' ');
+      const spans  = [...el.querySelectorAll('span')];
+
+      const groups = [];
+      let curTop = null, cur = [];
+      spans.forEach(s => {
+        const top = s.offsetTop;
+        if (curTop === null || top === curTop) { cur.push(s.textContent); curTop = top; }
+        else { groups.push(cur.join(' ')); cur = [s.textContent]; curTop = top; }
+      });
+      if (cur.length) groups.push(cur.join(' '));
+
+      /* Reconstruir con estructura wrapper + bloque */
+      const blocks = [], lineEls = [];
+      el.innerHTML = '';
+      groups.forEach(lineText => {
+        const wrap = document.createElement('span');
+        wrap.style.cssText = 'position:relative;display:block;overflow:hidden;';
+
+        const txt = document.createElement('span');
+        txt.style.cssText = 'display:block;';
+        txt.textContent = lineText;
+
+        const blk = document.createElement('span');
+        blk.style.cssText = `position:absolute;top:0;left:0;width:100%;height:100%;background:${blockColor};z-index:2;`;
+
+        wrap.appendChild(txt);
+        wrap.appendChild(blk);
+        el.appendChild(wrap);
+        blocks.push(blk);
+        lineEls.push(txt);
+      });
+
+      return { blocks, lineEls };
+    }
+
+    /* Crea la animación de wipe para un elemento */
+    function wipe(el, blockColor, duration, stagger) {
+      if (!el) return;
+      const { blocks, lineEls } = buildBlockLines(el, blockColor);
+      if (!blocks.length) return;
+
+      gsap.set(blocks,  { scaleX: 0, transformOrigin: 'left center' });
+      gsap.set(lineEls, { opacity: 0 });
+
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
+      })
+      .to(blocks,   { scaleX: 1, duration, stagger, transformOrigin: 'left center',  ease: 'expo.inOut' })
+      .set(lineEls, { opacity: 1 },                                                    `<${duration * 0.5}`)
+      .to(blocks,   { scaleX: 0, duration, stagger, transformOrigin: 'right center', ease: 'expo.inOut' }, `<${duration * 0.4}`);
+    }
+
+    const title = document.querySelector('.vision__title');
+    const paras = [...document.querySelectorAll('.vision__p')];
+    const stmts = [...document.querySelectorAll('.vision__close p')];
+
+    if (!title && !paras.length) return;
+
+    wipe(title, COLOR_MAIN, 0.72, 0.055);
+    paras.forEach(p => wipe(p, COLOR_MAIN, 0.52, 0.032));
+    stmts.forEach(p => wipe(p, COLOR_STMT, 0.80, 0.060));
+  }
+
+  /* ═══════════════════════════════════
+     HOVER SLIDER — galería SierraViva
+     ═══════════════════════════════════ */
+  function setupSvivaHoverSlider() {
+    const items  = [...document.querySelectorAll('.sviva__hs-item')];
+    const imgs   = [...document.querySelectorAll('.sviva__hs-img')];
+    if (!items.length || !imgs.length) return;
+
+    const VISIBLE   = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
+    const HIDDEN_T  = 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)';   /* sale por arriba */
+    const HIDDEN_B  = 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)'; /* sale por abajo */
+
+    let current = 0;
+
+    function goTo(next) {
+      if (next === current) return;
+
+      const prevImg = imgs[current];
+      const nextImg = imgs[next];
+
+      /* La imagen anterior sale hacia arriba */
+      gsap.to(prevImg, {
+        clipPath: HIDDEN_T,
+        duration: 0.65,
+        ease: 'power3.inOut',
+      });
+
+      /* La imagen nueva entra desde abajo */
+      gsap.fromTo(nextImg,
+        { clipPath: HIDDEN_B },
+        { clipPath: VISIBLE, duration: 0.75, ease: 'power3.inOut' }
+      );
+
+      /* Clases activas en los items */
+      items[current].classList.remove('sviva__hs-item--active');
+      items[next].classList.add('sviva__hs-item--active');
+
+      current = next;
+    }
+
+    items.forEach((item, i) => {
+      /* Desktop: hover cambia la imagen. Mobile/touch: tap.
+         Adjuntamos ambos — goTo() ignora el índice ya activo, así que el
+         click en desktop es inofensivo y el tap en móvil siempre funciona. */
+      item.addEventListener('mouseenter', () => goTo(i));
+      item.addEventListener('click',      () => goTo(i));
+    });
+  }
+
+  /* ═══════════════════════════════════
      SCROLLTELLING — canvas + 192 frames
      ═══════════════════════════════════ */
   function setupScrolltelling() {
@@ -645,7 +781,7 @@
 
       /* start→holdIn: palabras entran; holdIn→holdOut: plateau; holdOut→end: palabras salen */
       const copies = [
-        { el: document.getElementById('st-copy-1'), start: -0.02, holdIn: 0.06, holdOut: 0.30, end: 0.34 },
+        { el: document.getElementById('st-copy-1'), start: -0.1, holdIn: -0.01, holdOut: 0.30, end: 0.34 },
         { el: document.getElementById('st-copy-2'), start:  0.34, holdIn: 0.40, holdOut: 0.68, end: 0.72 },
         { el: document.getElementById('st-copy-3'), start:  0.72, holdIn: 0.78, holdOut: 2.00, end: 3.00 },
       ];
@@ -689,14 +825,15 @@
       img.onload = img.onerror = () => {
         loadedCount++;
         if (fill) fill.style.width = (loadedCount / TOTAL * 100).toFixed(1) + '%';
-        if (loadedCount === TOTAL) initST();
       };
       img.src    = `${folder}/ezgif-frame-${pad(i + 1)}.jpg`;
       images[i]  = img;
     }
 
-    /* Primer frame en cuanto esté disponible */
-    images[0].addEventListener('load', () => { resize(); }, { once: true });
+    /* Hacer el scrub interactivo apenas carga el primer frame:
+       renderFrame() ignora frames aún no cargados (mantiene el último visible),
+       así el hero responde sin esperar a que bajen los ~192 frames completos. */
+    images[0].addEventListener('load', () => { resize(); initST(); }, { once: true });
   }
 
   /* ═══════════════════════════════════

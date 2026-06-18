@@ -10,7 +10,7 @@
 <meta property="og:locale" content="es_AR">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body class="no-js">
@@ -105,6 +105,27 @@
   </div>
 </section>
 
+<!-- ═══ VISIÓN ════════════════════════════════════════════ -->
+<section class="vision" id="vision">
+  <div class="vision__inner">
+    <div class="vision__header">
+      <span class="vision__tag">
+        <span class="vision__tag-dot" aria-hidden="true"></span>
+        Nuestra visión
+      </span>
+      <h2 class="vision__title">Pensar la ciudad que viene.</h2>
+    </div>
+    <div class="vision__body">
+      <p class="vision__p">Tandil atraviesa uno de los procesos de crecimiento urbano más importantes de su historia. Miles de familias eligen la ciudad por su naturaleza, seguridad, calidad de vida y oportunidades.</p>
+      <p class="vision__p">Nuestra misión es acompañar ese crecimiento desarrollando proyectos innovadores que eleven el estándar de cómo se vive, se invierte y se disfruta la ciudad.</p>
+    </div>
+    <div class="vision__close">
+      <p>No seguimos tendencias.</p>
+      <p>Buscamos crearlas.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ MARQUEE ════════════════════════════════════════════ -->
 <div class="marquee" aria-hidden="true">
   <div class="marquee__inner">
@@ -151,7 +172,7 @@
 
     <div class="accordion__item accordion__item--active" role="listitem" data-acc-item tabindex="0"
          aria-label="SierraViva — Country Urbano en Tandil">
-      <img src="public/render-fachada.jpg" alt="SierraViva — render fachada" loading="lazy">
+      <img src="public/render-fachada.jpg" alt="SierraViva — render fachada" loading="lazy" decoding="async">
       <div class="accordion__overlay"></div>
       <div class="accordion__info">
         <h3 class="accordion__name">SierraViva</h3>
@@ -188,15 +209,25 @@
     </div>
   </div>
 
-  <div class="sviva__gallery" aria-label="Renders del proyecto SierraViva">
-    <div class="sviva__gal-a reveal-up" data-delay="0">
-      <img src="public/render-hero.jpg" alt="SierraViva — fachada exterior" loading="lazy">
-    </div>
-    <div class="sviva__gal-b reveal-up" data-delay="120">
-      <img src="public/render-amenities.jpg" alt="SierraViva — piscina y jardín comunitario" loading="lazy">
-    </div>
-    <div class="sviva__gal-c reveal-up" data-delay="240">
-      <img src="public/render-sum.jpg" alt="SierraViva — SUM y parrilla" loading="lazy">
+  <div class="sviva__hover-slider" aria-label="Galería SierraViva">
+    <ul class="sviva__hs-list" role="list">
+      <li class="sviva__hs-item sviva__hs-item--active" data-hs-item="0" role="listitem">
+        <span class="sviva__hs-index" aria-hidden="true">01</span>
+        <span class="sviva__hs-label">Arquitectura</span>
+      </li>
+      <li class="sviva__hs-item" data-hs-item="1" role="listitem">
+        <span class="sviva__hs-index" aria-hidden="true">02</span>
+        <span class="sviva__hs-label">Área de Piscina</span>
+      </li>
+      <li class="sviva__hs-item" data-hs-item="2" role="listitem">
+        <span class="sviva__hs-index" aria-hidden="true">03</span>
+        <span class="sviva__hs-label">SUM & Parrilla</span>
+      </li>
+    </ul>
+    <div class="sviva__hs-media">
+      <img src="public/render-hero.jpg"       class="sviva__hs-img" data-hs-img="0" alt="SierraViva — fachada exterior" loading="lazy" decoding="async">
+      <img src="public/render-amenities.jpg"  class="sviva__hs-img" data-hs-img="1" alt="SierraViva — piscina y jardín comunitario" loading="lazy" decoding="async">
+      <img src="public/render-sum.jpg"        class="sviva__hs-img" data-hs-img="2" alt="SierraViva — SUM y parrilla" loading="lazy" decoding="async">
     </div>
   </div>
 
@@ -239,7 +270,7 @@
 <!-- ═══ NOSOTROS ══════════════════════════════════════════ -->
 <section class="nosotros" id="nosotros">
   <div class="nosotros__media" data-parallax-img>
-    <img src="public/DSC_7667.jpg" alt="Deby Cardinale y Nicolás Pastura — Cardinale Pastura Tandil" loading="lazy">
+    <img src="public/DSC_7667.jpg" alt="Deby Cardinale y Nicolás Pastura — Cardinale Pastura Tandil" loading="lazy" decoding="async">
     <span class="nosotros__rule" aria-hidden="true"></span>
   </div>
 
@@ -257,6 +288,7 @@
     </div>
   </div>
 </section>
+
 
 
 </main>
