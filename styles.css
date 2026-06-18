@@ -46,7 +46,6 @@ ul { list-style: none }
 ::selection { background: var(--steel); color: var(--white) }
 
 /* Ocultar intro si JS está deshabilitado */
-.no-js .page-intro { display: none }
 .no-js .reveal-up,
 .no-js .word { opacity: 1; transform: none }
 
@@ -60,28 +59,6 @@ ul { list-style: none }
 
 /* ─── focus ─── */
 :focus-visible { outline: 2px solid var(--steel); outline-offset: 3px }
-
-/* ═══════════════════════════════════════════
-   PAGE INTRO — cortinas al estilo CL
-   ═══════════════════════════════════════════ */
-.page-intro {
-  position: fixed; inset: 0; z-index: 9990;
-  pointer-events: none;
-}
-.page-intro__logo {
-  position: absolute; inset: 0; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; /* GSAP lo anima a 1 */
-}
-.page-intro__logo img { width: clamp(140px, 18vw, 240px); height: auto }
-.page-intro__curtains {
-  position: absolute; inset: 0; z-index: 1;
-  display: grid; grid-template-columns: repeat(8, 1fr);
-}
-.curtain {
-  background: var(--navy);
-  transform-origin: top;
-}
 
 
 /* ═══════════════════════════════════════════

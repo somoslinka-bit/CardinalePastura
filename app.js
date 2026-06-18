@@ -50,46 +50,8 @@
 
   document.querySelectorAll('[data-word-split]').forEach(el => splitWords(el));
 
-  /* ═══════════════════════════════════
-     INTRO CURTAIN — GSAP (estilo CL)
-     ═══════════════════════════════════ */
-  const intro     = document.getElementById('page-intro');
-  const curtains  = intro ? intro.querySelectorAll('.curtain') : [];
-  const introLogo = intro ? intro.querySelector('.page-intro__logo') : null;
-
-  if (intro && curtains.length && !prefersReduced) {
-    /* Bloquear scroll hasta que termina el intro */
-    lenis.stop();
-
-    const tl = gsap.timeline({
-      defaults: { ease: 'power3.inOut' },
-      onComplete: () => {
-        intro.style.display = 'none';
-        lenis.start();
-        triggerHeroReveals();
-      },
-    });
-
-    /* Logo fade in → pausa → curtains caen */
-    tl.fromTo(introLogo,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.9 }
-    )
-    .to({}, { duration: 0.8 }) /* pausa con el logo */
-    .to(introLogo, { opacity: 0, duration: 0.4 }, '-=0.2')
-    .to(curtains, {
-      scaleY: 0,
-      duration: 1.0,
-      stagger: 0.06,
-      ease: 'power4.inOut',
-      transformOrigin: 'top',
-    }, '-=0.1');
-  } else {
-    /* Sin animación: ocultar intro y disparar hero */
-    if (intro) intro.style.display = 'none';
-    triggerHeroReveals();
-    lenis.start();
-  }
+  lenis.start();
+  triggerHeroReveals();
 
   /* ═══════════════════════════════════
      HERO REVEALS — above the fold
