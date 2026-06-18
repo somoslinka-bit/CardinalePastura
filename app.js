@@ -333,22 +333,30 @@
     };
 
     items.forEach(item => {
-      /* Desktop (puntero fino): hover y foco abren el item.
-         En touch NO registramos mouseenter — iOS lo dispara junto al tap y
-         deja el click sin efecto, rompiendo la apertura. */
       if (hasFinePointer) {
+        /* Desktop: hover y foco abren el item */
         item.addEventListener('mouseenter', () => activate(item));
         item.addEventListener('focus',      () => activate(item));
+        item.addEventListener('click', e => {
+          if (!item.classList.contains('accordion__item--active')) {
+            e.preventDefault();
+            activate(item);
+          }
+        });
+      } else {
+        /* Mobile: Lenis previene el touchstart nativo, bloqueando la síntesis
+           del evento click en iOS. Usamos touchstart/touchmove/touchend directo. */
+        let touchMoved = false;
+        item.addEventListener('touchstart', () => { touchMoved = false; }, { passive: true });
+        item.addEventListener('touchmove',  () => { touchMoved = true;  }, { passive: true });
+        item.addEventListener('touchend', e => {
+          if (touchMoved) return; /* fue scroll, no tap */
+          if (!item.classList.contains('accordion__item--active')) {
+            e.preventDefault(); /* evita el click sintético y navegación prematura */
+            activate(item);
+          }
+        });
       }
-
-      /* Tap/click: si el item está cerrado, primer tap lo expande.
-         Si ya está abierto, el tap deja pasar el link interno (Ver proyecto). */
-      item.addEventListener('click', e => {
-        if (!item.classList.contains('accordion__item--active')) {
-          e.preventDefault();
-          activate(item);
-        }
-      });
     });
   }
 
@@ -786,7 +794,11 @@
     function initVideoMode() {
       canvas.style.display = 'none';
       video.style.display  = 'block';
-      video.pause();
+      /* iOS no muestra frames al setear currentTime sin haber llamado play() antes.
+         play() con muted está permitido sin interacción del usuario. */
+      const playPromise = video.play();
+      if (playPromise instanceof Promise) playPromise.then(() => video.pause()).catch(() => {});
+      else video.pause();
 
       const copies = makeCopies();
       let targetTime = 0, rafId = null;
