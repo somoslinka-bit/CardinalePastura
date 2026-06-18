@@ -158,71 +158,15 @@
       });
     });
 
-    /* Stats counter */
-    const statsSection = document.querySelector('.nosotros__stats');
-    if (statsSection) {
-      ScrollTrigger.create({
-        trigger: statsSection,
-        start: 'top 75%',
-        once: true,
-        onEnter: () => animateCounters(),
-      });
-    }
   }
 
   setupScrollReveals();
-  setupBentoHero();
   setupScrolltelling();
   setupAccordion();
   setupVelocityText();
-
-  /* ═══════════════════════════════════
-     CONTADOR ANIMADO
-     ═══════════════════════════════════ */
-  function animateCounters() {
-    document.querySelectorAll('[data-count]').forEach(el => {
-      const target   = parseInt(el.dataset.count, 10);
-      const suffix   = el.dataset.suffix || '';
-      const duration = 1600;
-      const start    = performance.now();
-
-      const tick = (now) => {
-        const elapsed  = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased    = 1 - Math.pow(1 - progress, 4);
-        el.textContent = Math.round(eased * target) + suffix;
-        if (progress < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    });
-  }
-
-  /* ═══════════════════════════════════
-     BENTO HERO — scroll-driven
-     ═══════════════════════════════════ */
-  function setupBentoHero() {
-    const bentoScroll = document.querySelector('.bento-scroll');
-    const bentoCells  = document.querySelectorAll('.bento-cell');
-    if (!bentoScroll || !bentoCells.length) return;
-
-    const isMobile = window.innerWidth < 768;
-
-    /* Cells: estado inicial pequeño/desplazado */
-    gsap.fromTo(bentoCells,
-      { x: isMobile ? '-15%' : '-35%', scale: 0.8 },
-      {
-        x: '0%',
-        scale: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: bentoScroll,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1.2,
-        },
-      }
-    );
-  }
+  setupProyectosSplit();
+  setupSvivaSplit();
+  setupNosotrosSplit();
 
   /* ═══════════════════════════════════
      PARALLAX INTERLUDE — 4 capas
@@ -300,50 +244,6 @@
       setMenu(false);
   });
 
-  /* ═══════════════════════════════════
-     CURSOR PERSONALIZADO
-     ═══════════════════════════════════ */
-  if (hasFinePointer) {
-    const cursor = document.getElementById('cursor');
-    const dot    = cursor.querySelector('.cursor__dot');
-    let tx = -100, ty = -100, cx = -100, cy = -100;
-
-    document.addEventListener('mousemove', e => {
-      tx = e.clientX; ty = e.clientY;
-      cursor.classList.add('is-on');
-    });
-    document.addEventListener('mouseleave', () => cursor.classList.remove('is-on'));
-
-    const tickCursor = () => {
-      cx = lerp(cx, tx, 0.14);
-      cy = lerp(cy, ty, 0.14);
-      cursor.style.left = cx + 'px';
-      cursor.style.top  = cy + 'px';
-      requestAnimationFrame(tickCursor);
-    };
-    requestAnimationFrame(tickCursor);
-
-    document.querySelectorAll('a, button, input, select, textarea, .card').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
-    });
-
-    /* Cursor blanco en secciones oscuras */
-    const darkSections = [
-      document.getElementById('nosotros'),
-      document.querySelector('.marquee'),
-      document.querySelector('.footer'),
-    ].filter(Boolean);
-
-    const observeDark = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) cursor.classList.add('is-dark');
-        else cursor.classList.remove('is-dark');
-      });
-    }, { threshold: 0.4 });
-
-    darkSections.forEach(s => observeDark.observe(s));
-  }
 
   /* ═══════════════════════════════════
      MAGNETIC BUTTONS
@@ -427,13 +327,12 @@
         item.classList.add('accordion__item--active');
       });
 
-      // Soporte teclado
       item.addEventListener('focus', () => {
         items.forEach(el => el.classList.remove('accordion__item--active'));
         item.classList.add('accordion__item--active');
       });
 
-      // Mobile: primer tap expande, segundo tap navega al link
+      // Mobile: primer tap expande, segundo tap sigue el link interno
       item.addEventListener('click', e => {
         if (!item.classList.contains('accordion__item--active')) {
           e.preventDefault();
@@ -476,6 +375,201 @@
       const clamped = Math.max(-20, Math.min(20, vel));
       lastScroll = currentScroll;
       gsap.to(text, { skewX: clamped, duration: 0.4, ease: 'power1.out', overwrite: 'auto' });
+    });
+  }
+
+  /* ═══════════════════════════════════
+     SPLITTEXT — tag + título SierraViva
+     ═══════════════════════════════════ */
+  function setupSvivaSplit() {
+    const tagText   = document.querySelector('.sviva__tag-text');
+    const title     = document.querySelector('.sviva__title');
+    const lead      = document.querySelector('.sviva__lead');
+    const loc       = document.querySelector('.sviva__loc');
+    const statItems = [...document.querySelectorAll('.sviva__stat')];
+    // cta no se anima con GSAP — su hover usa .ah/.ah2 que GSAP rompe
+
+    if (!tagText || !title) return;
+
+    /* Quitar reveal-up para que GSAP tome el control */
+    [lead, loc].filter(Boolean).forEach(el => el.classList.remove('reveal-up'));
+
+    /* Helper: mide líneas renderizadas y construye nos-line wrappers */
+    function lineReveal(el) {
+      const words = el.textContent.trim().split(/\s+/);
+      el.innerHTML = words.map(w => `<span style="display:inline">${w}</span>`).join(' ');
+      const spans = [...el.querySelectorAll('span')];
+      const lines = [];
+      let curTop = null, curLine = [];
+      spans.forEach(s => {
+        const top = s.offsetTop;
+        if (curTop === null || top === curTop) { curLine.push(s.textContent); curTop = top; }
+        else { lines.push(curLine.join(' ')); curLine = [s.textContent]; curTop = top; }
+      });
+      if (curLine.length) lines.push(curLine.join(' '));
+      el.innerHTML = lines
+        .map(l => `<span class="nos-line"><span class="nos-line-in">${l}</span></span>`)
+        .join('\n');
+      return [...el.querySelectorAll('.nos-line-in')];
+    }
+
+    /* Tag: char a char */
+    tagText.innerHTML = [...tagText.textContent.trim()]
+      .map(c => c === ' ' ? '<span aria-hidden="true"> </span>' : `<span class="sv-char">${c}</span>`)
+      .join('');
+    const chars = tagText.querySelectorAll('.sv-char');
+
+    /* Título: palabra a palabra, clip reveal */
+    title.innerHTML = title.textContent.trim().split(/\s+/)
+      .map(w => `<span class="sv-word" style="display:inline-block;overflow:hidden;vertical-align:bottom"><span class="sv-word-inner" style="display:inline-block">${w}</span></span>`)
+      .join(' ');
+    const wordInners = title.querySelectorAll('.sv-word-inner');
+
+    /* Lead: line reveal */
+    const leadInners = lead ? lineReveal(lead) : [];
+
+    /* Loc: split manual por <br> */
+    let locInners = [];
+    if (loc) {
+      const parts = loc.innerHTML.split(/<br\s*\/?>/i);
+      loc.innerHTML = parts
+        .map(p => p.replace(/<[^>]*>/g, '').trim())
+        .filter(Boolean)
+        .map(t => `<span class="nos-line"><span class="nos-line-in">${t}</span></span>`)
+        .join('');
+      locInners = [...loc.querySelectorAll('.nos-line-in')];
+    }
+
+    /* Estados iniciales */
+    gsap.set(chars,                           { opacity: 0, y: 8 });
+    gsap.set(wordInners,                      { y: '105%' });
+    gsap.set([...leadInners, ...locInners],   { yPercent: 105 });
+    gsap.set(statItems,                       { opacity: 0, y: 20 });
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '.sviva',
+        start: 'top 75%',
+        end: 'top 5%',
+        scrub: 1,
+      },
+    })
+    .to(chars,
+      { opacity: 1, y: 0, duration: 0.35, stagger: 0.015, ease: 'none' })
+    .to(wordInners,
+      { y: '0%', duration: 0.6, stagger: 0.05, ease: 'none' }, '-=0.1')
+    .to([...leadInners, ...locInners],
+      { yPercent: 0, duration: 0.5, stagger: 0.045, ease: 'none' }, '-=0.35')
+    .to(statItems,
+      { opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: 'none' }, '-=0.25')
+    ;
+  }
+
+  /* ═══════════════════════════════════
+     LINE REVEAL — sección proyectos
+     ═══════════════════════════════════ */
+  function setupProyectosSplit() {
+    const title    = document.querySelector('.proyectos .section__title');
+    const accItems = [...document.querySelectorAll('.accordion__item')];
+    if (!title) return;
+
+    function lineReveal(el) {
+      const words = el.textContent.trim().split(/\s+/);
+      el.innerHTML = words.map(w => `<span style="display:inline">${w}</span>`).join(' ');
+      const spans = [...el.querySelectorAll('span')];
+      const lines = [];
+      let curTop = null, curLine = [];
+      spans.forEach(s => {
+        const top = s.offsetTop;
+        if (curTop === null || top === curTop) { curLine.push(s.textContent); curTop = top; }
+        else { lines.push(curLine.join(' ')); curLine = [s.textContent]; curTop = top; }
+      });
+      if (curLine.length) lines.push(curLine.join(' '));
+      el.innerHTML = lines
+        .map(l => `<span class="nos-line"><span class="nos-line-in">${l}</span></span>`)
+        .join('\n');
+      return [...el.querySelectorAll('.nos-line-in')];
+    }
+
+    const titleInners = lineReveal(title);
+
+    gsap.set(titleInners, { yPercent: 105 });
+    gsap.set(accItems,    { opacity: 0, y: 40 });
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '.proyectos',
+        start: 'top 75%',
+        end: 'top 5%',
+        scrub: 1,
+      },
+    })
+    .to(titleInners, { yPercent: 0, duration: 0.5, stagger: 0.06, ease: 'none' })
+    .to(accItems,    { opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: 'none' }, '-=0.2');
+  }
+
+  /* ═══════════════════════════════════
+     LINE REVEAL — sección nosotros
+     ═══════════════════════════════════ */
+  function setupNosotrosSplit() {
+    const lead  = document.querySelector('.nosotros__lead');
+    const paras = [...document.querySelectorAll('.nosotros__bio p')];
+    const targets = lead ? [lead, ...paras] : paras;
+    if (!targets.length) return;
+
+    /* Mide las líneas renderizadas agrupando palabras por offsetTop */
+    function measureLines(el) {
+      const text  = el.textContent.trim();
+      const words = text.split(/\s+/);
+      el.innerHTML = words.map(w => `<span style="display:inline">${w}</span>`).join(' ');
+
+      const spans = [...el.querySelectorAll('span')];
+      const lines = [];
+      let curTop  = null;
+      let curLine = [];
+
+      spans.forEach(s => {
+        const top = s.offsetTop;
+        if (curTop === null || top === curTop) {
+          curLine.push(s.textContent);
+          curTop = top;
+        } else {
+          lines.push(curLine.join(' '));
+          curLine = [s.textContent];
+          curTop  = top;
+        }
+      });
+      if (curLine.length) lines.push(curLine.join(' '));
+
+      return lines;
+    }
+
+    const allInners = [];
+
+    targets.forEach(el => {
+      const lines = measureLines(el);
+      el.innerHTML = lines
+        .map(line => `<span class="nos-line"><span class="nos-line-in">${line}</span></span>`)
+        .join('\n');
+      allInners.push(...el.querySelectorAll('.nos-line-in'));
+    });
+
+    gsap.set(allInners, { yPercent: 105 });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.querySelector('.nosotros__body'),
+        start: 'top 75%',
+        end: 'top 5%',
+        scrub: 1,
+      },
+    });
+
+    tl.to(allInners, {
+      yPercent: 0,
+      duration: 1,
+      stagger: 0.06,
+      ease: 'none',
     });
   }
 
@@ -549,10 +643,11 @@
 
       const hint = document.getElementById('st-hint');
 
+      /* start→holdIn: palabras entran; holdIn→holdOut: plateau; holdOut→end: palabras salen */
       const copies = [
-        { el: document.getElementById('st-copy-1'), in: 0.02, peak: 0.12, out: 0.36 },
-        { el: document.getElementById('st-copy-2'), in: 0.34, peak: 0.46, out: 0.86 },
-        { el: document.getElementById('st-copy-3'), in: 0.83, peak: 0.90, out: 1.00 },
+        { el: document.getElementById('st-copy-1'), start: -0.02, holdIn: 0.06, holdOut: 0.30, end: 0.34 },
+        { el: document.getElementById('st-copy-2'), start:  0.34, holdIn: 0.40, holdOut: 0.68, end: 0.72 },
+        { el: document.getElementById('st-copy-3'), start:  0.72, holdIn: 0.78, holdOut: 2.00, end: 3.00 },
       ];
 
       ScrollTrigger.create({
@@ -573,12 +668,13 @@
           /* Hint — desaparece al empezar a scrollear */
           if (hint) hint.style.opacity = p < 0.04 ? String(1 - p / 0.04) : '0';
 
-          /* Textos fade in / out */
-          copies.forEach(({ el, in: inP, peak, out }) => {
+          /* Textos: sube → plateau → baja, sin overlap entre frases */
+          copies.forEach(({ el, start, holdIn, holdOut, end }) => {
             if (!el) return;
             let op = 0;
-            if (p > inP  && p <= peak) op = (p - inP)  / (peak - inP);
-            else if (p > peak && p < out)  op = 1 - (p - peak) / (out - peak);
+            if      (p >= start   && p <  holdIn)  op = (p - start)    / (holdIn  - start);
+            else if (p >= holdIn  && p <= holdOut) op = 1;
+            else if (p >  holdOut && p <  end)     op = 1 - (p - holdOut) / (end - holdOut);
             el.style.opacity = Math.max(0, Math.min(1, op));
           });
         },
