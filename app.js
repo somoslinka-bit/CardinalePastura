@@ -290,14 +290,8 @@
     if (!items.length) return;
 
     const activate = (item) => {
-      items.forEach(el => {
-        el.classList.remove('accordion__item--active');
-        const b = el.querySelector('.acc-btn');
-        if (b) b.style.pointerEvents = 'auto';
-      });
+      items.forEach(el => el.classList.remove('accordion__item--active'));
       item.classList.add('accordion__item--active');
-      const b = item.querySelector('.acc-btn');
-      if (b) b.style.pointerEvents = 'none';
     };
 
     if (hasFinePointer) {
@@ -320,10 +314,6 @@
         btn.setAttribute('aria-hidden', 'true');
         btn.setAttribute('tabindex', '-1');
         btn.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;background:none;border:none;padding:0;cursor:pointer;z-index:5;';
-        /* Ítem activo: pointer-events none para que funcionen los links internos */
-        if (item.classList.contains('accordion__item--active')) {
-          btn.style.pointerEvents = 'none';
-        }
         item.appendChild(btn);
 
         btn.addEventListener('click', () => {
