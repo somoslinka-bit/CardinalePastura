@@ -290,8 +290,14 @@
     if (!items.length) return;
 
     const activate = (item) => {
-      items.forEach(el => el.classList.remove('accordion__item--active'));
+      items.forEach(el => {
+        el.classList.remove('accordion__item--active');
+        const b = el.querySelector('.acc-btn');
+        if (b) b.style.pointerEvents = 'auto';
+      });
       item.classList.add('accordion__item--active');
+      const b = item.querySelector('.acc-btn');
+      if (b) b.style.pointerEvents = 'none';
     };
 
     if (hasFinePointer) {
@@ -307,27 +313,24 @@
         });
       });
     } else {
-      /* Mobile: delegación en document para evitar cualquier intercepción
-         por Lenis o event bubbling a nivel de elemento. Mide distancia
-         de toque para distinguir tap (< 10px) de scroll. */
-      let t0x = 0, t0y = 0;
-      document.addEventListener('touchstart', e => {
-        t0x = e.touches[0].clientX;
-        t0y = e.touches[0].clientY;
-      }, { passive: true });
-
-      document.addEventListener('touchend', e => {
-        const dx = Math.abs(e.changedTouches[0].clientX - t0x);
-        const dy = Math.abs(e.changedTouches[0].clientY - t0y);
-        if (dx > 8 || dy > 8) return; /* fue scroll, ignorar */
-
-        const item = e.target.closest('[data-acc-item]');
-        if (!item) return;
-
-        if (!item.classList.contains('accordion__item--active')) {
-          e.preventDefault(); /* evita click sintético y navegación prematura */
-          activate(item);
+      /* Mobile: inyecta un <button> invisible sobre cada ítem.
+         Los <button> reciben click en iOS siempre, sin importar Lenis. */
+      items.forEach(item => {
+        const btn = document.createElement('button');
+        btn.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('tabindex', '-1');
+        btn.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;background:none;border:none;padding:0;cursor:pointer;z-index:5;';
+        /* Ítem activo: pointer-events none para que funcionen los links internos */
+        if (item.classList.contains('accordion__item--active')) {
+          btn.style.pointerEvents = 'none';
         }
+        item.appendChild(btn);
+
+        btn.addEventListener('click', () => {
+          if (!item.classList.contains('accordion__item--active')) {
+            activate(item);
+          }
+        });
       });
     }
   }
