@@ -168,6 +168,7 @@
   setupSvivaSplit();
   setupSvivaHoverSlider();
   setupNosotrosSplit();
+  setupNosotrosImgReveal();
   setupVisionBlockReveal();
 
   /* ═══════════════════════════════════
@@ -210,7 +211,8 @@
     if (parallaxImg && window.innerWidth > 960) {
       const rect     = parallaxImg.closest('[data-parallax-img]').getBoundingClientRect();
       const progress = -rect.top / window.innerHeight;
-      parallaxImg.style.transform = `translateY(${progress * 60}px)`;
+      /* Solo la variable --py: el scale de entrada (--ps) queda intacto */
+      parallaxImg.style.setProperty('--py', (progress * 60) + 'px');
     }
   });
 
@@ -575,6 +577,41 @@
       stagger: 0.06,
       ease: 'none',
     });
+  }
+
+  /* ═══════════════════════════════════
+     NOSOTROS — reveal cortina de la foto
+     ═══════════════════════════════════ */
+  function setupNosotrosImgReveal() {
+    const media = document.querySelector('.nosotros__media');
+    const img   = media?.querySelector('img');
+    const rule  = media?.querySelector('.nosotros__rule');
+    if (!img) return;
+
+    if (prefersReduced) return;
+
+    /* Estado inicial: imagen recortada desde abajo + leve zoom */
+    gsap.set(img, { clipPath: 'inset(100% 0% 0% 0%)', '--ps': 1.18 });
+    if (rule) gsap.set(rule, { scaleY: 0, transformOrigin: 'bottom' });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: media,
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    });
+
+    /* La cortina sube revelando la imagen mientras el zoom se asienta */
+    tl.to(img, {
+      clipPath: 'inset(0% 0% 0% 0%)',
+      '--ps': 1,
+      duration: 1.5,
+      ease: 'expo.inOut',
+    });
+
+    /* La línea steel se traza después, como remate */
+    if (rule) tl.to(rule, { scaleY: 1, duration: 0.7, ease: 'power3.inOut' }, '-=0.6');
   }
 
   /* ═══════════════════════════════════
