@@ -1354,12 +1354,18 @@ body.menu-open .mobile-menu nav a:nth-child(4) { transition-delay: .5s }
 .footer__col a:hover { color: var(--white) }
 .footer__social { display: flex; gap: 14px; margin-top: 8px }
 .footer__social a {
-  width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.15);
-  display: inline-flex; align-items: center; justify-content: center; color: var(--gray-light);
-  transition: border-color .35s var(--ease-expo), color .35s var(--ease-expo);
+  display: inline-flex; align-items: center; gap: 12px; color: var(--gray-light);
+  transition: color .35s var(--ease-expo);
+}
+.footer__social-icon {
+  width: 36px; height: 36px; flex: none;
+  border: 1px solid rgba(255,255,255,.15);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: border-color .35s var(--ease-expo);
 }
 .footer__social svg { width: 14px; height: 14px }
-.footer__social a:hover { border-color: var(--steel); color: var(--steel) }
+.footer__social a:hover { color: var(--steel) }
+.footer__social a:hover .footer__social-icon { border-color: var(--steel) }
 .footer__bottom {
   max-width: var(--container); margin: 32px auto 0;
   display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;
