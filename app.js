@@ -723,7 +723,7 @@
   }
 
   /* ═══════════════════════════════════
-     SCROLLTELLING — canvas + 192 frames
+     SCROLLTELLING — canvas + 243 frames
      ═══════════════════════════════════ */
   function setupScrolltelling() {
     const canvas = document.getElementById('st-canvas');
@@ -737,9 +737,8 @@
     function makeCopies() {
       /* start→holdIn: entra · holdIn→holdOut: plateau · holdOut→end: sale */
       return [
-        { el: document.getElementById('st-copy-1'), start: -0.1, holdIn: -0.01, holdOut: 0.30, end: 0.34 },
-        { el: document.getElementById('st-copy-2'), start:  0.34, holdIn: 0.40, holdOut: 0.68, end: 0.72 },
-        { el: document.getElementById('st-copy-3'), start:  0.72, holdIn: 0.78, holdOut: 2.00, end: 3.00 },
+        { el: document.getElementById('st-copy-1'), start: -0.1, holdIn: -0.01, holdOut: 0.13, end: 0.17 },
+        { el: document.getElementById('st-copy-2'), start: 0.17, holdIn: 0.21, holdOut: 0.44, end: 0.49 },
       ];
     }
     const hintEl = document.getElementById('st-hint');
@@ -787,7 +786,7 @@
     /* ── MODO FRAMES — secuencia en canvas (desktop, o fallback en mobile) ── */
     function initFramesMode() {
       const ctx    = canvas.getContext('2d');
-      const TOTAL  = 192;
+      const TOTAL  = 243;
       const folder = isMobile ? 'public/animacion-mobile' : 'public/animacion';
       const pad    = n => String(n).padStart(3, '0');
 
@@ -858,7 +857,7 @@
           loadedCount++;
           if (fill) fill.style.width = (loadedCount / TOTAL * 100).toFixed(1) + '%';
         };
-        img.src    = `${folder}/ezgif-frame-${pad(i + 1)}.jpg`;
+        img.src    = `${folder}/ezgif-frame-${pad(i + 1)}.jpg?v=3`;
         images[i]  = img;
       }
       /* Scrub interactivo apenas carga el primer frame (el resto baja en background) */

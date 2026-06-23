@@ -2,6 +2,8 @@
 .DS_Store
 Thumbs.db
 
-# Videos no usados en producción
+# Videos no usados en producción / archivos fuente pesados
 public/hero.mp4
 public/video mas depacio sierrviva.mp4
+public/Slideshow Sierra Viva.mp4
+public/logo_pastura_nobg.mov
