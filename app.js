@@ -134,37 +134,6 @@
   setupVisionBlockReveal();
 
   /* ═══════════════════════════════════
-     PARALLAX INTERLUDE — 4 capas
-     ═══════════════════════════════════ */
-  function setupParallaxSection() {
-    const wrap   = document.querySelector('.parallax-wrap');
-    const layers = wrap?.querySelector('[data-parallax-layers]');
-    if (!wrap || !layers) return;
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: wrap,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-      },
-    });
-
-    [
-      { layer: '1', yPercent: 65 },  /* fondo — movimiento máximo */
-      { layer: '2', yPercent: 45 },  /* CARDINALE — movimiento medio */
-      { layer: '3', yPercent: 35 },  /* PASTURA — movimiento medio */
-      { layer: '4', yPercent: 8  },  /* retrato — casi fijo = primer plano */
-    ].forEach((obj, idx) => {
-      tl.to(
-        layers.querySelectorAll(`[data-parallax-layer="${obj.layer}"]`),
-        { yPercent: obj.yPercent, ease: 'none' },
-        idx === 0 ? 0 : '<'   /* todos arrancan al mismo tiempo */
-      );
-    });
-  }
-
-  /* ═══════════════════════════════════
      PARALLAX — nosotros img
      ═══════════════════════════════════ */
   const parallaxImg = document.querySelector('[data-parallax-img] img');
@@ -212,63 +181,6 @@
       setMenu(false);
   });
 
-
-  /* ═══════════════════════════════════
-     MAGNETIC BUTTONS
-     ═══════════════════════════════════ */
-  if (hasFinePointer) {
-    document.querySelectorAll('.btn-magnetic').forEach(btn => {
-      btn.addEventListener('mousemove', e => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top  - rect.height / 2;
-        btn.style.transform = `translate(${x * 0.22}px, ${y * 0.28}px)`;
-      });
-      btn.addEventListener('mouseleave', () => { btn.style.transform = '' });
-    });
-  }
-
-  /* ═══════════════════════════════════
-     FORM — validación + éxito
-     ═══════════════════════════════════ */
-  const form        = document.getElementById('form');
-  const formSuccess = document.getElementById('form-success');
-  const formReset   = document.getElementById('form-reset');
-
-  if (form) {
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const nameField  = form.querySelector('#f-name');
-      const emailField = form.querySelector('#f-email');
-      let valid = true;
-
-      [nameField, emailField].forEach(field => {
-        const isEmpty  = !field.value.trim();
-        const badEmail = field.type === 'email' && !/.+@.+\..+/.test(field.value);
-        if (isEmpty || badEmail) {
-          field.style.borderBottomColor = '#c0392b';
-          valid = false;
-        } else {
-          field.style.borderBottomColor = '';
-        }
-      });
-
-      if (!valid) return;
-      form.hidden = true;
-      formSuccess.hidden = false;
-    });
-  }
-
-  if (formReset) {
-    formReset.addEventListener('click', () => {
-      form.reset();
-      form.hidden = false;
-      formSuccess.hidden = true;
-      form.querySelectorAll('input, textarea').forEach(f => {
-        f.style.borderBottomColor = '';
-      });
-    });
-  }
 
   /* ═══════════════════════════════════
      SMOOTH SCROLL — links internos
@@ -349,9 +261,17 @@
       }
     );
 
-    // Skew por velocidad de scroll
+    // Skew por velocidad de scroll — solo mientras la sección está visible
     let lastScroll = 0;
+    let visible = false;
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top bottom',
+      end: 'bottom top',
+      onToggle: self => { visible = self.isActive; },
+    });
     gsap.ticker.add(() => {
+      if (!visible) return;
       const currentScroll = window.scrollY;
       const vel = (currentScroll - lastScroll) * 0.08;
       const clamped = Math.max(-20, Math.min(20, vel));
@@ -371,7 +291,7 @@
     const statItems = [...document.querySelectorAll('.sviva__stat')];
     // cta no se anima con GSAP — su hover usa .ah/.ah2 que GSAP rompe
 
-    if (!tagText || !title) return;
+    if (!title) return;
 
     /* Quitar reveal-up para que GSAP tome el control */
     [lead, loc].filter(Boolean).forEach(el => el.classList.remove('reveal-up'));
@@ -395,11 +315,14 @@
       return [...el.querySelectorAll('.nos-line-in')];
     }
 
-    /* Tag: char a char */
-    tagText.innerHTML = [...tagText.textContent.trim()]
-      .map(c => c === ' ' ? '<span aria-hidden="true"> </span>' : `<span class="sv-char">${c}</span>`)
-      .join('');
-    const chars = tagText.querySelectorAll('.sv-char');
+    /* Tag: char a char (opcional — puede no existir en el HTML) */
+    let chars = [];
+    if (tagText) {
+      tagText.innerHTML = [...tagText.textContent.trim()]
+        .map(c => c === ' ' ? '<span aria-hidden="true"> </span>' : `<span class="sv-char">${c}</span>`)
+        .join('');
+      chars = [...tagText.querySelectorAll('.sv-char')];
+    }
 
     /* Título: palabra a palabra, clip reveal */
     title.innerHTML = title.textContent.trim().split(/\s+/)
@@ -423,28 +346,41 @@
     }
 
     /* Estados iniciales */
-    gsap.set(chars,                           { opacity: 0, y: 8 });
+    if (chars.length) gsap.set(chars,         { opacity: 0, y: 8 });
     gsap.set(wordInners,                      { y: '105%' });
     gsap.set([...leadInners, ...locInners],   { yPercent: 105 });
     gsap.set(statItems,                       { opacity: 0, y: 20 });
 
-    gsap.timeline({
+    /* Grupo superior: título + lead + ubicación — animan al entrar el encabezado */
+    const tlTop = gsap.timeline({
       scrollTrigger: {
-        trigger: '.sviva',
-        start: 'top 75%',
-        end: 'top 5%',
+        trigger: '.sviva__top',
+        start: 'top 80%',
+        end: 'top 35%',
         scrub: 1,
       },
-    })
-    .to(chars,
-      { opacity: 1, y: 0, duration: 0.35, stagger: 0.015, ease: 'none' })
-    .to(wordInners,
-      { y: '0%', duration: 0.6, stagger: 0.05, ease: 'none' }, '-=0.1')
+    });
+
+    if (chars.length)
+      tlTop.to(chars, { opacity: 1, y: 0, duration: 0.35, stagger: 0.015, ease: 'none' });
+
+    tlTop.to(wordInners,
+      { y: '0%', duration: 0.6, stagger: 0.05, ease: 'none' }, chars.length ? '-=0.1' : 0)
     .to([...leadInners, ...locInners],
-      { yPercent: 0, duration: 0.5, stagger: 0.045, ease: 'none' }, '-=0.35')
-    .to(statItems,
-      { opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: 'none' }, '-=0.25')
-    ;
+      { yPercent: 0, duration: 0.5, stagger: 0.045, ease: 'none' }, '-=0.35');
+
+    /* Stats: animan recién cuando el pie de la sección entra en pantalla */
+    if (statItems.length) {
+      gsap.to(statItems, {
+        opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: 'none',
+        scrollTrigger: {
+          trigger: '.sviva__foot',
+          start: 'top 88%',
+          end: 'top 55%',
+          scrub: 1,
+        },
+      });
+    }
   }
 
   /* ═══════════════════════════════════
@@ -787,7 +723,7 @@
     /* ── MODO FRAMES — secuencia en canvas (desktop, o fallback en mobile) ── */
     function initFramesMode() {
       const ctx    = canvas.getContext('2d');
-      const TOTAL  = 243;
+      const TOTAL  = 242;
       const folder = isMobile ? 'public/animacion-mobile' : 'public/animacion';
       const pad    = n => String(n).padStart(3, '0');
 
@@ -874,6 +810,10 @@
       if (video.readyState >= 1) {
         useVideo();
       } else {
+        /* El <video> arranca con preload="none" para no descargarse en desktop.
+           Acá (solo mobile) lo activamos y forzamos la carga. */
+        video.preload = 'auto';
+        video.load();
         video.addEventListener('loadedmetadata', useVideo,  { once: true });
         video.addEventListener('error',          useFrames, { once: true });
         /* Si en 5s no hubo metadata ni error, usar frames por las dudas */

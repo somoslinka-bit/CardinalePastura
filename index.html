@@ -10,8 +10,8 @@
 <meta property="og:locale" content="es_AR">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Raleway:wght@200;300;400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;700&family=Raleway:wght@200;300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body class="no-js">
 
@@ -64,7 +64,7 @@
     <div class="scrolltelling__sticky">
 
       <canvas id="st-canvas" class="scrolltelling__canvas" aria-hidden="true"></canvas>
-      <video id="st-video" class="scrolltelling__video" muted playsinline preload="auto" aria-hidden="true">
+      <video id="st-video" class="scrolltelling__video" muted playsinline preload="none" aria-hidden="true">
         <source src="public/hero-mobile.mp4" type="video/mp4">
       </video>
       <div class="scrolltelling__vignette" aria-hidden="true"></div>
@@ -83,27 +83,6 @@
       </div>
 
 
-    </div>
-  </div>
-</section>
-
-<!-- ═══ VISIÓN ════════════════════════════════════════════ -->
-<section class="vision" id="vision">
-  <div class="vision__inner">
-    <div class="vision__header">
-      <span class="vision__tag">
-        <span class="vision__tag-dot" aria-hidden="true"></span>
-        Nuestra visión
-      </span>
-      <h2 class="vision__title">Pensar la ciudad que viene.</h2>
-    </div>
-    <div class="vision__body">
-      <p class="vision__p">Tandil atraviesa uno de los procesos de crecimiento urbano más importantes de su historia. Miles de familias eligen la ciudad por su naturaleza, seguridad, calidad de vida y oportunidades.</p>
-      <p class="vision__p">Nuestra misión es acompañar ese crecimiento desarrollando proyectos innovadores que eleven el estándar de cómo se vive, se invierte y se disfruta la ciudad.</p>
-    </div>
-    <div class="vision__close">
-      <p>No seguimos tendencias.</p>
-      <p>Buscamos crearlas.</p>
     </div>
   </div>
 </section>
@@ -142,6 +121,27 @@
   </div>
 </div>
 
+<!-- ═══ VISIÓN ════════════════════════════════════════════ -->
+<section class="vision" id="vision">
+  <div class="vision__inner">
+    <div class="vision__close">
+      <p>No seguimos tendencias.</p>
+      <p>Buscamos crearlas.</p>
+    </div>
+    <div class="vision__header">
+      <span class="vision__tag">
+        <span class="vision__tag-dot" aria-hidden="true"></span>
+        Nuestra visión
+      </span>
+      <h2 class="vision__title">Pensar la Ciudad que viene.</h2>
+    </div>
+    <div class="vision__body">
+      <p class="vision__p">Tandil atraviesa uno de los procesos de crecimiento urbano más importantes de su historia. Miles de familias eligen la Ciudad por su naturaleza, seguridad, calidad de vida y oportunidades.</p>
+      <p class="vision__p">Nuestra misión es acompañar ese crecimiento desarrollando proyectos innovadores que eleven el estándar de cómo se vive, se invierte y se disfruta la Ciudad.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ PROYECTOS ══════════════════════════════════════════ -->
 <section class="proyectos section" id="proyectos">
   <div class="section__head">
@@ -157,10 +157,11 @@
       <img src="public/render-fachada.jpg" alt="SierraViva — render fachada" loading="lazy" decoding="async">
       <div class="accordion__overlay"></div>
       <div class="accordion__info">
-        <h3 class="accordion__name">SierraViva</h3>
+        <h3 class="accordion__name accordion__name--sviva">SierraViva</h3>
         <a href="https://sierravivatandil.com/" target="_blank" rel="noopener noreferrer" class="accordion__cta--pill">Ver proyecto →</a>
       </div>
       <span class="accordion__label" aria-hidden="true">SierraViva</span>
+      <span class="accordion__loc" aria-hidden="true">Tandil 2026</span>
     </div>
 
     <div class="accordion__item accordion__item--coming" role="listitem" data-acc-item tabindex="0"
@@ -286,7 +287,7 @@
     <h2 class="nosotros__lead">Una visión compartida.</h2>
 
     <div class="nosotros__bio">
-      <p>Cardinale Pastura es la unión de dos familias profundamente vinculadas al desarrollo de Tandil.</p>
+      <p>Cardinale Pastura es la unión de dos familias profundamente vinculadas al desarrollo inmobiliario de Tandil.</p>
       <p>Deby Cardinale aporta su experiencia en el mercado inmobiliario, el conocimiento legal y una mirada cercana sobre las necesidades reales de quienes buscan un hogar o una inversión.</p>
       <p>Nicolás Pastura aporta visión estratégica, creatividad y una fuerte vocación por diseñar proyectos que generen impacto urbano y valor a largo plazo.</p>
       <p>Juntos impulsan desarrollos donde el diseño, la funcionalidad y la experiencia de las personas son el centro de cada decisión.</p>
@@ -333,7 +334,7 @@
 <!-- CDN: GSAP (para intro + stagger animations) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=9"></script>
 
 <!-- Botón flotante WhatsApp -->
 <a class="whatsapp-fab" href="https://wa.me/541130331724" target="_blank" rel="noopener noreferrer"
