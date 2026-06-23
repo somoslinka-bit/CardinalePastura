@@ -781,6 +781,7 @@
           updateOverlay(copies, p);
         },
       });
+      updateOverlay(copies, 0);
     }
 
     /* ── MODO FRAMES — secuencia en canvas (desktop, o fallback en mobile) ── */
@@ -848,6 +849,7 @@
             updateOverlay(copies, p);
           },
         });
+        updateOverlay(copies, 0);
       }
 
       const fill = document.getElementById('st-fill');
