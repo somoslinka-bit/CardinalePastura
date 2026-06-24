@@ -435,25 +435,35 @@
     const targets = lead ? [lead, ...paras] : paras;
     if (!targets.length) return;
 
-    /* Mide las líneas renderizadas agrupando palabras por offsetTop */
+    /* Mide las líneas renderizadas agrupando palabras por offsetTop.
+       Preserva elementos inline (strong, em, etc.) como tokens completos. */
     function measureLines(el) {
-      const text  = el.textContent.trim();
-      const words = text.split(/\s+/);
-      el.innerHTML = words.map(w => `<span style="display:inline">${w}</span>`).join(' ');
+      const tokens = [];
+      el.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          node.textContent.trim().split(/\s+/).filter(Boolean).forEach(w => {
+            tokens.push(w);
+          });
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          tokens.push(node.outerHTML);
+        }
+      });
 
-      const spans = [...el.querySelectorAll('span')];
+      el.innerHTML = tokens.map(t => `<span style="display:inline">${t}</span>`).join(' ');
+
+      const spans = [...el.querySelectorAll(':scope > span')];
       const lines = [];
       let curTop  = null;
       let curLine = [];
 
-      spans.forEach(s => {
+      spans.forEach((s, i) => {
         const top = s.offsetTop;
         if (curTop === null || top === curTop) {
-          curLine.push(s.textContent);
+          curLine.push(tokens[i]);
           curTop = top;
         } else {
           lines.push(curLine.join(' '));
-          curLine = [s.textContent];
+          curLine = [tokens[i]];
           curTop  = top;
         }
       });

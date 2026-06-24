@@ -948,6 +948,14 @@ body.menu-open .mobile-menu nav a:nth-child(4) { transition-delay: .5s }
   color: var(--gray-soft);
   font-weight: 300;
 }
+.nosotros__bio strong {
+  color: var(--white);
+  font-weight: 700;
+}
+.nosotros__bio em {
+  font-style: italic;
+  color: var(--gray-soft);
+}
 
 /* Line-reveal: wrappers generados por JS */
 .nos-line {
@@ -1148,8 +1156,7 @@ body.menu-open .mobile-menu nav a:nth-child(4) { transition-delay: .5s }
 
 .sviva-video-intro__vid {
   width: 100%;
-  height: 56vw;
-  max-height: 80vh;
+  height: 56.25vw;
   object-fit: cover;
   display: block;
 }
