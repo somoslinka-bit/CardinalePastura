@@ -49,6 +49,17 @@ ul { list-style: none }
 .no-js .reveal-up,
 .no-js .word { opacity: 1; transform: none }
 
+/* ─── visually hidden (SEO + a11y, no visible en pantalla) ─── */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ─── skip link ─── */
 .skip-link {
   position: absolute; left: -9999px; top: 0;
@@ -1059,6 +1070,7 @@ body.menu-open .mobile-menu nav a:nth-child(4) { transition-delay: .5s }
 }
 .footer__col { display: flex; flex-direction: column; gap: 14px }
 .footer__col--brand { gap: 24px }
+.footer__address { font-style: normal; display: flex; flex-direction: column; gap: 6px }
 .footer__logo { width: 96px; height: auto }
 .footer__col p,
 .footer__col a {
